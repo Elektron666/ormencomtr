@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Newsreader", serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Space Grotesk", sans-serif;
+
+  --color-primary: #c5a07d;
+  --color-primary-container: #e8e2d7;
+  --color-on-primary-container: #2c1608;
+  --color-surface: #fcfaf7;
+  --color-on-surface: #1a1a1a;
+  --color-on-surface-variant: #4a4a4a;
+  --color-outline: #d1d1d1;
+  --color-outline-variant: #e5e5e5;
+  --color-surface-container: #f5f2ed;
+  --color-surface-container-high: #ebe7e0;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body selection:bg-primary/30 selection:text-on-surface;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .text-vertical {
+    writing-mode: vertical-rl;
+  }
+}

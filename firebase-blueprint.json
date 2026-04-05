@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "sector": {
+      "title": "Sector",
+      "description": "Business sectors served by the company",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the sector" },
+        "order": { "type": "number", "description": "Display order" }
+      },
+      "required": ["name", "order"]
+    },
+    "message": {
+      "title": "Contact Message",
+      "description": "Messages sent from the contact form",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message", "createdAt"]
+    },
+    "user": {
+      "title": "User Profile",
+      "description": "User profile and roles",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/sectors/{sectorId}": {
+      "schema": "sector",
+      "description": "Sectors displayed on the home page"
+    },
+    "/messages/{messageId}": {
+      "schema": "message",
+      "description": "Contact form submissions"
+    },
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profiles and permissions"
+    }
+  }
+}

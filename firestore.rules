@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: sectors
+    // Fields:
+    //   - name: string (required)
+    //   - order: number (required)
+    //
+    // Collection: messages
+    // Fields:
+    //   - name: string (required)
+    //   - email: string (required, email format)
+    //   - message: string (required)
+    //   - createdAt: timestamp (required)
+    //
+    // Collection: users
+    // Fields:
+    //   - email: string (required)
+    //   - role: string (required, 'admin' or 'user')
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "ormentekstil@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // Collection Rules
+    
+    match /sectors/{sectorId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /messages/{messageId} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message', 'createdAt']) &&
+                    request.resource.data.name is string && request.resource.data.name.size() > 0 &&
+                    request.resource.data.email is string && isValidEmail(request.resource.data.email) &&
+                    request.resource.data.message is string && request.resource.data.message.size() > 0;
+      allow read, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId) && request.resource.data.role == 'user';
+      allow update: if isAdmin();
+    }
+  }
+}
